@@ -8,8 +8,8 @@
     "particles-bg": "^2.5.5",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-parallax-tilt": "^1.7.70",
-    "react-scripts": "5.0.1",
+    "react-parallax-tilt": "^1.7.67",
+    "react-scripts": "^5.0.1",
     "tachyons": "^4.12.0"
 
   },
@@ -18,12 +18,6 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [
