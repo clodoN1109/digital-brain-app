@@ -4,7 +4,25 @@
     width: 350px;
     background-size:  350px 300px;
     background-color: rgba(255, 187, 222, 0.05);
+    opacity: 0.75;
 
 
 }
 
+.zoomBox {
+    width: 1px;
+    height: 1px;
+    /*background-image: url('https://www.playtothecrowd.co.uk/sites/default/files/images/play-to-the-crowd-overlay.jpg');
+    */background-size: cover;
+    transition: all 1s;
+
+
+}
+
+
+.flexLogo {
+
+    display: flex;
+    flex-direction: row;
+
+}

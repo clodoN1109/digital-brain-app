@@ -1,4 +1,74 @@
 .form {
-    background-color: rgba(255, 187, 222, 0.05);
+    background-color: rgba(130, 130, 150, 0.2);
+    padding: 10px 32px 10px 32px;
+
+}
+
+.linkBox{
+
+    display: flex;
+    height: 38px;
+    gap:3px;
+    
+}
+
+#linkSpace {
+
+    width:55vw;
+
+}
+
+.subBox{
+
+    display: flex;
+    gap: 3px;
+    padding: 3px 0 3px 0;
+
+}
+
+button {
+
+    border-width: 1px;
+    padding: 4px 0 4px 0;
+    height: 38px;
+    text-align: center;
+    text-justify: center;
+
+}
+
+button:hover {
+
+    opacity: 1;
+
+
+}
+
+.copyButton {
+
+    padding: 0;
+    opacity: 0.7;
+
+}
+
+
+.folderButton {
+
+    padding: 0;
+    opacity: 0.7;
+    
+}
+
+
+.sendButton {
+
+    padding: 0 10px 0 20px;
+    opacity: 0.7;
+
+}
+
+.randomButton {
+
+        padding: 0 0 0 0;
+    opacity: 0.7;
 
 }

@@ -7,10 +7,10 @@ const Rank = () => {
 
         <div>
 
-            <div className='white f3'>
+            <div className='f3 white'>
                 
-                <div style={{fontSize:"20px", padding:'0'}}>{'Clodo, your current rank is...'}</div>
-                <div>{'#49'}</div>
+                <div style={{fontSize:"20px", padding:'0', color:'floralwhite'}}>{'Clodo, your current pixel count is...'}</div>
+                <div className='w-15 f4 ph3 pv2 dib white' style={{color:'rgba(200,30,100)'}}>{'49.453.508 pixels'}</div>
 
             
             </div>
