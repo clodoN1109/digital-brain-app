@@ -6,7 +6,7 @@ const ImageLinkForm = ({onInputChange, onButtonSubmit, sample, onCopyFromClipboa
     return (
 
         <div className='center' style={{padding:'0 0 60px 0'}}> 
-            <p className='f3' style ={{fontSize:'20px'}}>
+            <p className='f3' style ={{fontSize:'20px', margin:'10px' }}>
                 {'Exchange pixels for information.'}
             </p>
             <div className='pa4 br3 shadow-5 form' style={{width:'70%'}}>

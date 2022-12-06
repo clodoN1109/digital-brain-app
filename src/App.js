@@ -21,7 +21,7 @@ logo.style.height = 0;
 */
 let config = {
   num: [4, 7],
-  rps: 0.1,
+  rps: 0,
   radius: [5, 5],
   life: [1.5, 3],
   v: [2, 3],
@@ -30,9 +30,9 @@ let config = {
   rotate: [0, 20],
   alpha: [0.1, 0],
   scale: [1, 0.05],
-      position:  {x:690,y:340,width:1,height:50}, // all or center or {x:1,y:1,width:100,height:100}
+      position:  {x:1,y:550,width:1000,height:100}, // all or center or {x:1,y:1,width:100,height:100}
       color: ["random", "#ff0000"],
-      cross: "bround", // cross or bround
+      bround: "cross", // cross or bround
       random: 15,  // or null,
       g: 1,    // gravity
       f: [2, -1], // force
@@ -51,11 +51,13 @@ let listOfFaces = [];
 
 let indexOfFace = -1;
 
-let imageJPEG = '';
+let imageLink = '';
+
 
 const app = new Clarifai.App({
       apiKey: 'b8996a9b4962460e97e5ada5dc67192e'
 });
+
 
 function faceRecognition(imgURL){
 
@@ -113,7 +115,14 @@ function faceRecognition(imgURL){
 
   };
 
+  document.getElementsByClassName('zoomBox')[0].style.display = '';
+  document.getElementById("zoomCanvas").getContext("2d").reset();
+
+  
   imgURL = imgURL.replace(/\s+/g, ''); // Removes whitespaces.
+
+  imageLink = imgURL;
+  
 
   app.models.predict("a403429f2ddf4b49b307e318f00e528b", imgURL)
   .then(
@@ -133,7 +142,7 @@ function faceRecognition(imgURL){
 
       console.log('this.state.input: ', imgURL);
       tiltBox.style.backgroundImage = 'url('+ imgURL +')';
-      document.getElementsByClassName("particles-bg-canvas-self")[0].hidden = false;
+      //document.getElementsByClassName("particles-bg-canvas-self")[0].hidden = false;
 
       canvasBox.style.width = '0px';
       canvasBox.style.height = '0px';
@@ -141,7 +150,7 @@ function faceRecognition(imgURL){
 
       setTimeout(() => {
 
-        document.getElementsByClassName("particles-bg-canvas-self")[0].hidden = true;
+        //document.getElementsByClassName("particles-bg-canvas-self")[0].hidden = true;
 
         logo.style.opacity = 0;
         logo.style.width = 0;
@@ -183,12 +192,12 @@ function processingAnimation(time){
   setTimeout(() => {
 
     document.getElementsByClassName("particles-bg-canvas-self")[0].hidden = true;
-
+    
   }, time); 
 
 };
 
-processingAnimation(4000);
+//processingAnimation(4000);
 
 
 class App extends Component {
@@ -261,7 +270,7 @@ class App extends Component {
   onHoverImage = (event) => {
 
   
-    let imgURL = this.state.input;
+    let imgURL = imageLink;
 
     function imageCorrelation(currentX, currentY, imgURL){
 
@@ -270,30 +279,32 @@ class App extends Component {
 
         console.log('face: ', index);
 
+        
+        //document.getElementsByClassName('zoomBox')[0].hidden = false;
+
         const ctx = document.getElementById("zoomCanvas").getContext("2d");
 
         const image = new Image();
+        //image.crossOrigin = "Anonymous";
         image.src = imgURL;
+        
 
         let xRes = 300;
         let yRes = 140;
 
-        xOrigin = xOrigin*982;
-        yOrigin = yOrigin*725;
-        width = width*982;
-        height = height*726;
+        xOrigin = xOrigin*image.width;
+        yOrigin = yOrigin*image.height;
+        width = width*image.width;
+        height = height*image.height;
 
         image.addEventListener("load", () => {
 
 
                           console.log('xOrigin, yOrigin, width, height');
                           console.log(xOrigin, yOrigin, width, height);
-
-
-
-                          image.crossOrigin = "Anonymous";
+                          
                           ctx.drawImage(image, xOrigin, yOrigin, width, height, 0, 0, xRes, yRes);
-                          let imageData = ctx.getImageData(xOrigin, yOrigin, width, height);
+                          //let imageData = ctx.getImageData(xOrigin, yOrigin, width, height);
                           //ctx.reset();
                           //ctx.putImageData(imageData, 0, 0);
 
@@ -322,6 +333,7 @@ class App extends Component {
 /*          console.log('index, indexOfFace index === indexOfFace');
           console.log(index, indexOfFace, index === indexOfFace);*/
           if(index != indexOfFace){
+            console.log('-------------------------------');
             indexOfFace = index;
             exhibitFace(xOrigin, yOrigin, width, height, index, imgURL); 
 
