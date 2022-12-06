@@ -188,18 +188,6 @@ function processingAnimation(time){
 
 };
 
-
-function createImageFileFromURL(imgURL){
-
-
-
-}
-
-
-createImageFileFromURL('');
-
-
-
 processingAnimation(4000);
 
 
@@ -277,36 +265,40 @@ class App extends Component {
 
     function imageCorrelation(currentX, currentY, imgURL){
 
-      function exhibitFace(xOrigin, yOrigin, xMax, yMax, index, imgURL){
+      function exhibitFace(xOrigin, yOrigin, width, height, index, imgURL){
 
-        function sliceImage(xOrigin, yOrigin, xMax, yMax, imgURL){
-        
-          let sliceJPEG = createImageFileFromURL(imgURL);
-
-          return sliceJPEG;
-
-        };
 
         console.log('face: ', index);
 
+        const ctx = document.getElementById("zoomCanvas").getContext("2d");
 
-        /*let sliceURL = sliceImage(xOrigin, yOrigin, xMax, yMax);*/
-        let sliceURL = 'https://i.ytimg.com/vi/nlZCkRi05JQ/maxresdefault.jpg';
-
-        let zoomBox = document.getElementsByClassName('zoomBox')[0];
-        zoomBox.style.transform =  'scale(160) rotate(10deg) translate(-1px, 0.7px)';
-        
-
-        const canvas = document.getElementById("zoomCanvas");
-        const ctx = canvas.getContext("2d");
         const image = new Image();
         image.src = imgURL;
+
+        let xRes = 300;
+        let yRes = 140;
+
+        xOrigin = xOrigin*982;
+        yOrigin = yOrigin*725;
+        width = width*982;
+        height = height*726;
+
         image.addEventListener("load", () => {
-        ctx.drawImage(image, 0, 0, 233, 320);});
+
+
+                          console.log('xOrigin, yOrigin, width, height');
+                          console.log(xOrigin, yOrigin, width, height);
 
 
 
+                          image.crossOrigin = "Anonymous";
+                          ctx.drawImage(image, xOrigin, yOrigin, width, height, 0, 0, xRes, yRes);
+                          let imageData = ctx.getImageData(xOrigin, yOrigin, width, height);
+                          //ctx.reset();
+                          //ctx.putImageData(imageData, 0, 0);
 
+
+                       });
 
       };
 
@@ -331,7 +323,7 @@ class App extends Component {
           console.log(index, indexOfFace, index === indexOfFace);*/
           if(index != indexOfFace){
             indexOfFace = index;
-            exhibitFace(xOrigin, yOrigin, xMax, yMax, index, imgURL); 
+            exhibitFace(xOrigin, yOrigin, width, height, index, imgURL); 
 
           }
 
