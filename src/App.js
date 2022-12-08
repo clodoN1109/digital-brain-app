@@ -4,64 +4,27 @@ import Clarifai from 'clarifai';
 import ParticlesBg from 'particles-bg'
 import Navigation from './components/Navigation/Navigation.js';
 import Logo from './components/Logo/Logo.js';
+import config from './components/ParticlesConfig/ParticlesConfig.js';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm.js';
 import Rank from './components/Rank/Rank.js';
 import Footer from './components/Footer/Footer.js';
 import './App.css';
-/*
-let canvasBox =  document.getElementsByClassName('canvas')[0];
-canvasBox.style.width = '350px';
-canvasBox.style.height = '300px';
-canvasBox.style.border = '2px solid black';
 
-let logo =  document.getElementsByClassName('logo')[0];
-logo.style.opacity = 0;
-logo.style.width = 0;
-logo.style.height = 0;
-*/
-let config = {
-  num: [4, 7],
-  rps: 0,
-  radius: [5, 5],
-  life: [1.5, 3],
-  v: [2, 3],
-  tha: [-50, 60],
-      // body: "./img/icon.png", // Whether to render pictures
-  rotate: [0, 20],
-  alpha: [0.1, 0],
-  scale: [1, 0.05],
-      position:  {x:1,y:550,width:1000,height:100}, // all or center or {x:1,y:1,width:100,height:100}
-      color: ["random", "#ff0000"],
-      bround: "cross", // cross or bround
-      random: 15,  // or null,
-      g: 1,    // gravity
-      f: [2, -1], // force
-      onParticleUpdate: (ctx, particle) => {
-        ctx.beginPath();
-        ctx.rect(particle.p.x, particle.p.y, particle.radius * 2, particle.radius * 2);
-        ctx.fillStyle = particle.color;
-        ctx.fill();
-        ctx.closePath();
-      }
-    };
+let listOfFaces = []; // Storage of all face's bounding boxes found on the last analised image.
 
-let sampleIndex = [0];
+let lastIndexOfFace = -1; // Face bounding box index pointer is currently over.
 
-let listOfFaces = [];
+let imageLink = ''; // Current url or local address on the link form.
 
-let indexOfFace = -1;
-
-let imageLink = '';
-
+let sampleIndex = [0]; // Index of current sample image url on display. 
 
 const app = new Clarifai.App({
       apiKey: 'b8996a9b4962460e97e5ada5dc67192e'
 });
 
-
 function faceRecognition(imgURL){
 
-      function faceRecognitionPlot(regionsArray){
+  function PlotBoundingBoxes(regionsArray){
 
         function draw(xOrigin, yOrigin, width, height) {
           const canvas = document.getElementById("canvas");
@@ -115,58 +78,65 @@ function faceRecognition(imgURL){
 
   };
 
-  document.getElementsByClassName('zoomBox')[0].style.display = '';
-  document.getElementById("zoomCanvas").getContext("2d").reset();
+  function hideCanvasDisplayLogo (){
 
+    let canvasBox =  document.getElementsByClassName('canvas')[0];
+    let logo =  document.getElementsByClassName('logo')[0];
+    let tiltBox = document.getElementsByClassName('Tilt')[0];
+
+    logo.style.opacity = 1;
+    logo.style.width = '220px';
+    logo.style.height = '180px';
+
+    tiltBox.style.backgroundImage = 'url('+ imgURL +')';
+
+    canvasBox.style.width = '0px';
+    canvasBox.style.height = '0px';
+    canvasBox.style.border = '0px solid black';
+
+  };
+
+  function displayCanvasHideLogo (){
+
+    let canvasBox =  document.getElementsByClassName('canvas')[0];
+    let logo =  document.getElementsByClassName('logo')[0];
+    let tiltBox = document.getElementsByClassName('Tilt')[0];
+
+    logo.style.opacity = 0;
+    logo.style.width = 0;
+    logo.style.height = 0;
+
+    canvasBox.style.width = '350px';
+    canvasBox.style.height = '300px';
+    canvasBox.style.border = '0px solid black';
+
+  };
+
+  document.getElementsByClassName('zoomBox')[0].style.display = ''; // Unable zoom box display.
+  document.getElementById("zoomCanvas").getContext("2d").reset(); // Clear the zoom canvas for next plot.
+
+  imgURL = imgURL.replace(/\s+/g, ''); // Removes accidental whitespaces from url.
+
+  imageLink = imgURL; // Saves the current url link in a variable of greater scope so it can be used from other functions.
   
-  imgURL = imgURL.replace(/\s+/g, ''); // Removes whitespaces.
-
-  imageLink = imgURL;
-  
-
-  app.models.predict("a403429f2ddf4b49b307e318f00e528b", imgURL)
+  app.models.predict("a403429f2ddf4b49b307e318f00e528b", imgURL) //Requests face recognition analysis from Clarifai API.
   .then(
 
     function(response) {
 
-      console.log('response', response);
+      //console.log('response', response);
 
-
-      let logo =  document.getElementsByClassName('logo')[0];
-      let tiltBox = document.getElementsByClassName('Tilt')[0];
-      let canvasBox =  document.getElementsByClassName('canvas')[0];
-
-      logo.style.opacity = 1;
-      logo.style.width = '220px';
-      logo.style.height = '180px';
-
-      console.log('this.state.input: ', imgURL);
-      tiltBox.style.backgroundImage = 'url('+ imgURL +')';
-      //document.getElementsByClassName("particles-bg-canvas-self")[0].hidden = false;
-
-      canvasBox.style.width = '0px';
-      canvasBox.style.height = '0px';
-      canvasBox.style.border = '0px solid black';
+      hideCanvasDisplayLogo();
 
       setTimeout(() => {
 
-        //document.getElementsByClassName("particles-bg-canvas-self")[0].hidden = true;
 
-        logo.style.opacity = 0;
-        logo.style.width = 0;
-        logo.style.height = 0;
-
-        canvasBox.style.width = '350px';
-        canvasBox.style.height = '300px';
-        canvasBox.style.border = '0px solid black';
-
-              /*document.getElementsByClassName('Tilt')[0].style.backgroundImage = '';*/
-        faceRecognitionPlot(response.outputs[0].data.regions);
-
-        console.log('listOfFaces: ', listOfFaces);
+        displayCanvasHideLogo();
+        PlotBoundingBoxes(response.outputs[0].data.regions);
+        console.log('listOfDetectedFaces: ', listOfFaces);
 
 
-      }, 4000);
+      }, 3000);
 
     },
 
@@ -178,27 +148,6 @@ function faceRecognition(imgURL){
     );
 
 };
-
-function processingAnimation(time){
-
-  let aux = document.getElementsByClassName("particles-bg-canvas-self")[0];
-
-  if (aux!=undefined){
-
-    aux.hidden = false;
-
-  };
-
-  setTimeout(() => {
-
-    document.getElementsByClassName("particles-bg-canvas-self")[0].hidden = true;
-    
-  }, time); 
-
-};
-
-//processingAnimation(4000);
-
 
 class App extends Component {
 
@@ -227,7 +176,7 @@ class App extends Component {
 
   sample = () => {
 
-    console.log('click');
+    //console.log('click');
 
     document.getElementById('linkSpace').value = '';
 
@@ -254,7 +203,7 @@ class App extends Component {
 
   onCopyFromClipboard = () => {
 
-    console.log('click');
+    //console.log('click');
 
     navigator.clipboard.readText().then((clipText) => (
 
@@ -269,108 +218,109 @@ class App extends Component {
 
   onHoverImage = (event) => {
 
-  
     let imgURL = imageLink;
 
-    function imageCorrelation(currentX, currentY, imgURL){
+    function faceBoxPlot(currentX, currentY, imgURL){
 
-      function exhibitFace(xOrigin, yOrigin, width, height, index, imgURL){
+      function displayFace(currentFaceIndex, imgURL, refreshZoomDisplay){
 
-
-        console.log('face: ', index);
-
-        
-        //document.getElementsByClassName('zoomBox')[0].hidden = false;
-
-        const ctx = document.getElementById("zoomCanvas").getContext("2d");
-
-        const image = new Image();
-        //image.crossOrigin = "Anonymous";
-        image.src = imgURL;
-        
-
-        let xRes = 300;
-        let yRes = 140;
-
-        xOrigin = xOrigin*image.width;
-        yOrigin = yOrigin*image.height;
-        width = width*image.width;
-        height = height*image.height;
-
-        image.addEventListener("load", () => {
-
-
-                          console.log('xOrigin, yOrigin, width, height');
-                          console.log(xOrigin, yOrigin, width, height);
-                          
-                          ctx.drawImage(image, xOrigin, yOrigin, width, height, 0, 0, xRes, yRes);
-                          //let imageData = ctx.getImageData(xOrigin, yOrigin, width, height);
-                          //ctx.reset();
-                          //ctx.putImageData(imageData, 0, 0);
-
-
-                       });
-
-      };
-
-
-      listOfFaces.map(((face, index) => {
+        let face = listOfFaces[currentFaceIndex];
 
         let xOrigin = face[0];
         let yOrigin = face[1];
         let width = face[2];
         let height = face[3]; 
 
-        let xMax = xOrigin+width;
-        let yMax = yOrigin+height;
+        const ctx = document.getElementById("zoomCanvas").getContext("2d");
 
-        if ( ((currentX>xOrigin)&&(currentX<xMax))
-         &&
-         ((currentY>yOrigin)&&(currentY<yMax)) 
-         )
-        {
+        const image = new Image();
+        //image.crossOrigin = "Anonymous"; // Causes problems with most urls when informed. 
+        image.src = imgURL;
+        
+        xOrigin = xOrigin*image.width; // Scale conversion from 0-1 to 0-Image Resolution.
+        yOrigin = yOrigin*image.height;  // Scale conversion from 0-1 to 0-Image Resolution.
+        width = width*image.width;  // Scale conversion from 0-1 to 0-Image Resolution.
+        height = height*image.height;  // Scale conversion from 0-1 to 0-Image Resolution.
 
-/*          console.log('index, indexOfFace index === indexOfFace');
-          console.log(index, indexOfFace, index === indexOfFace);*/
-          if(index != indexOfFace){
-            console.log('-------------------------------');
-            indexOfFace = index;
-            exhibitFace(xOrigin, yOrigin, width, height, index, imgURL); 
+        let xRes = 300; //  Those were suposed to match exactly the zoom box (x,y) dimensions, but had to be manually adapted.
+        let yRes = 170;
 
+        image.addEventListener("load", () => {
+                          
+          ctx.drawImage(image, xOrigin, yOrigin, width, height, 0, 0, xRes, yRes);
+          
+          let imageData = ctx.getImageData(xOrigin, yOrigin, width, height);
+          console.log(imageData);
+          //ctx.putImageData(imageData, 0, 0);
+
+        });
+
+      };
+
+      function faceBoxCorrelationWithPointerPosition(currentX, currentY){
+
+        let currentFaceIndex = lastIndexOfFace;
+
+        listOfFaces.map(((face, index) => {
+
+          let xOrigin = face[0];
+          let yOrigin = face[1];
+          let width = face[2];
+          let height = face[3]; 
+  
+          let xMax = xOrigin+width;
+          let yMax = yOrigin+height;
+  
+          if ( ((currentX>xOrigin)&&(currentX<xMax))
+           &&
+           ((currentY>yOrigin)&&(currentY<yMax)) 
+           )
+          {
+  
+            currentFaceIndex = index;
+  
           }
+  
+        }));
 
-        }
+        return currentFaceIndex;
+        
+      }
 
-      }));
+      let currentFaceIndex = faceBoxCorrelationWithPointerPosition(currentX, currentY);
+
+      if(currentFaceIndex != lastIndexOfFace){ // Avoid unecessary calls of the function, i.e. , while the currentFaceIndex doesn't change.
+        lastIndexOfFace = currentFaceIndex;
+        displayFace(currentFaceIndex, imgURL);
+      }
 
     };
 
-/*        console.log('x', event.clientX);
-        console.log('y', event.clientY);*/
+    function pointerPosition(){
+      
+    /*  console.log('x', event.clientX);
+    console.log('y', event.clientY);*/
 
-        // Canvas pointer position determination:
+      let canvas = document.getElementById("canvas");
+      let bound = canvas.getBoundingClientRect();
+      let context = canvas.getContext('2d');
 
-    let canvas = document.getElementById("canvas");
-    let bound = canvas.getBoundingClientRect();
-    let context = canvas.getContext('2d');
+      let x = event.clientX - bound.left - canvas.clientLeft;
+      let y = event.clientY - bound.top - canvas.clientTop;
 
-    let x = event.clientX - bound.left - canvas.clientLeft;
-    let y = event.clientY - bound.top - canvas.clientTop;
+      let xScaleFix = 1.13;
+      let yScaleFix = 2; 
 
-    let xScaleFix = 1.13;
-    let yScaleFix = 2; 
+    /*context.fillRect(x/xScaleFix, y/yScaleFix, 2, 2);*/ //Used only to test and guide the callibration of the pointer.
 
-        /*context.fillRect(x/xScaleFix, y/yScaleFix, 2, 2);*/
+      x = x/xScaleFix/300;
+      y = y/yScaleFix/150;
 
-    x = x/xScaleFix/300;
-    y = y/yScaleFix/150;
-        /*console.log('x,y : ', x, y);*/
+      return [x,y];
 
-    imageCorrelation(x,y, imgURL);
+    }
 
-
-
-
+    faceBoxPlot(pointerPosition()[0], pointerPosition()[1], imgURL);
 
   };
 
@@ -396,8 +346,6 @@ class App extends Component {
   }
 
 }
-
-
 
 export default App;
 
