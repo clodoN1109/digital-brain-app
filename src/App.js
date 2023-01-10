@@ -8,6 +8,9 @@ import config from './components/ParticlesConfig/ParticlesConfig.js';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm.js';
 import Rank from './components/Rank/Rank.js';
 import Footer from './components/Footer/Footer.js';
+import Signin from './components/Signin/Signin.js';
+import Signup from './components/Signup/Signup.js';
+
 import './App.css';
 
 let listOfFaces = []; // Storage of all face's bounding boxes found on the last analised image.
@@ -21,6 +24,7 @@ let sampleIndex = [0]; // Index of current sample image url on display.
 const app = new Clarifai.App({
       apiKey: 'b8996a9b4962460e97e5ada5dc67192e'
 });
+console.log(app);
 
 function faceRecognition(imgURL){
 
@@ -119,7 +123,12 @@ function faceRecognition(imgURL){
 
   imageLink = imgURL; // Saves the current url link in a variable of greater scope so it can be used from other functions.
   
-  app.models.predict("a403429f2ddf4b49b307e318f00e528b", imgURL) //Requests face recognition analysis from Clarifai API.
+  console.log(Clarifai);
+
+  app.models.predict(    {
+    id: "a403429f2ddf4b49b307e318f00e528b",
+    version: "34ce21a40cc24b6b96ffee54aabff139",
+  }, imgURL) //Requests face recognition analysis from Clarifai API.
   .then(
 
     function(response) {
@@ -156,6 +165,7 @@ class App extends Component {
     super();
     this.state = {
       input:'',
+      route:'signin',
     }
 
   };
@@ -165,6 +175,12 @@ class App extends Component {
     this.setState({input: event.target.value});
 
   };
+
+  onRouteChange = (event) => {
+
+    this.setState({route: event});
+
+  }
 
   onButtonSubmit = () => {
 
@@ -330,19 +346,20 @@ class App extends Component {
 
     return (
       <div className="App">
-      <Navigation />
+      {(this.state.route === 'loggedin') ? <Navigation onRouteChange = {this.onRouteChange} /> :  <div style={{height:'40px'}}></div>}
       <Logo onHoverImage = {this.onHoverImage}/>
-      <Rank />
+      {(this.state.route === 'loggedin') ? <Rank /> : <div></div>}
       <ImageLinkForm onInputChange = {this.onInputChange} 
       onButtonSubmit = {this.onButtonSubmit} 
       sample = {this.sample}
       onCopyFromClipboard = {this.onCopyFromClipboard}/>
+      {(this.state.route === 'signin') ? <Signin onRouteChange = {this.onRouteChange}/> : <div></div>}
+      {(this.state.route === 'signup') ? <Signup onRouteChange = {this.onRouteChange}/> : <div></div>}
       <ParticlesBg type="custom" config={config} bg={true} />
       <Footer />
 
       </div>
       );
-
   }
 
 }

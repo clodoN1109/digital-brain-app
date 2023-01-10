@@ -15,7 +15,7 @@ const ImageLinkForm = ({onInputChange, onButtonSubmit, sample, onCopyFromClipboa
                     <input style={{fontSize:'15px'}} 
                            placeholder = 'enter image URL or local address' 
                            id='linkSpace' 
-                           className='f4 pa2 w-70' 
+                           className='f4 pa2 w-70 input-reset ba bg-transparent' 
                            type='text' 
                            onChange={onInputChange}/> 
 
