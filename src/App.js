@@ -19,144 +19,11 @@ let lastIndexOfFace = -1; // Face bounding box index pointer is currently over.
 
 let imageLink = ''; // Current url or local address on the link form.
 
-let sampleIndex = [0]; // Index of current sample image url on display. 
+let pixelCount = 0;
 
 const app = new Clarifai.App({
       apiKey: 'b8996a9b4962460e97e5ada5dc67192e'
 });
-console.log(app);
-
-function faceRecognition(imgURL){
-
-  function PlotBoundingBoxes(regionsArray){
-
-        function draw(xOrigin, yOrigin, width, height) {
-          const canvas = document.getElementById("canvas");
-          if (canvas.getContext) {
-            const ctx = canvas.getContext("2d");
-
-    // Box Style:
-
-            var gradient = ctx.createLinearGradient(0, 0, 170, 0);
-            gradient.addColorStop("0", "magenta");
-            gradient.addColorStop("0.5" ,"blue");
-            gradient.addColorStop("1.0", "red");
-
-            ctx.strokeStyle = gradient;
-            ctx.lineWidth = 2;
-
-    // Box Scaling and Positioning:
-
-            let widthScaleFix = 1.15;
-            let heightScaleFix = 1.95;
-            ctx.strokeRect(xOrigin*350/widthScaleFix, yOrigin*300/heightScaleFix, width*350/widthScaleFix, height*300/heightScaleFix);
-      /*ctx.fillRect(175/1.2, 150/2, 30, 30/1.8);*/ // Calibration
-          }
-        }
-
-        console.log('regionsArray', regionsArray);
-
-        const ctx = document.getElementById("canvas").getContext("2d");
-        ctx.reset();
-
-        let len = listOfFaces.length;
-    for(let i=0; i<len; i++){listOfFaces.pop()}; // Clean the array from the previews analysis.
-
-      regionsArray.map((region) => {
-
-        console.log('detected region', region);
-        let xOrigin = region.region_info.bounding_box.left_col;
-        let yOrigin = region.region_info.bounding_box.top_row;
-        let width =  region.region_info.bounding_box.right_col - xOrigin;
-        let height = region.region_info.bounding_box.bottom_row - yOrigin;
-
-      /*console.log(xOrigin, yOrigin, width, height);*/
-
-        listOfFaces.push([xOrigin, yOrigin, width, height]);
-
-        draw(xOrigin, yOrigin, width, height);
-
-
-
-      });
-
-  };
-
-  function hideCanvasDisplayLogo (){
-
-    let canvasBox =  document.getElementsByClassName('canvas')[0];
-    let logo =  document.getElementsByClassName('logo')[0];
-    let tiltBox = document.getElementsByClassName('Tilt')[0];
-
-    logo.style.opacity = 1;
-    logo.style.width = '220px';
-    logo.style.height = '180px';
-
-    tiltBox.style.backgroundImage = 'url('+ imgURL +')';
-
-    canvasBox.style.width = '0px';
-    canvasBox.style.height = '0px';
-    canvasBox.style.border = '0px solid black';
-
-  };
-
-  function displayCanvasHideLogo (){
-
-    let canvasBox =  document.getElementsByClassName('canvas')[0];
-    let logo =  document.getElementsByClassName('logo')[0];
-    let tiltBox = document.getElementsByClassName('Tilt')[0];
-
-    logo.style.opacity = 0;
-    logo.style.width = 0;
-    logo.style.height = 0;
-
-    canvasBox.style.width = '350px';
-    canvasBox.style.height = '300px';
-    canvasBox.style.border = '0px solid black';
-
-  };
-
-  document.getElementsByClassName('zoomBox')[0].style.display = ''; // Unable zoom box display.
-  document.getElementById("zoomCanvas").getContext("2d").reset(); // Clear the zoom canvas for next plot.
-
-  imgURL = imgURL.replace(/\s+/g, ''); // Removes accidental whitespaces from url.
-
-  imageLink = imgURL; // Saves the current url link in a variable of greater scope so it can be used from other functions.
-  
-  console.log(Clarifai);
-
-  app.models.predict(    {
-    id: "a403429f2ddf4b49b307e318f00e528b",
-    version: "34ce21a40cc24b6b96ffee54aabff139",
-  }, imgURL) //Requests face recognition analysis from Clarifai API.
-  .then(
-
-    function(response) {
-
-      //console.log('response', response);
-
-      hideCanvasDisplayLogo();
-
-      setTimeout(() => {
-
-
-        displayCanvasHideLogo();
-        PlotBoundingBoxes(response.outputs[0].data.regions);
-        console.log('listOfDetectedFaces: ', listOfFaces);
-
-
-      }, 3000);
-
-    },
-
-    function(err){
-      console.log(err);
-    }
-
-
-    );
-
-};
 
 class App extends Component {
 
@@ -166,9 +33,184 @@ class App extends Component {
     this.state = {
       input:'',
       route:'signin',
+      user: {
+
+        id: '0',
+        name: '',
+        email: '',
+        favoriteColor: '',
+        entries: 0,
+        joined: ''
+
+      },
+      sampleCurrentIndex : 0
     }
 
   };
+
+
+  loadUser = (data) => {
+
+    this.setState({user : 
+      
+      {
+
+        id: data.id,
+        name: data.name,
+        email: data.email,
+        favoriteColor: data.favoriteColor,
+        entries: data.entries,
+        joined: data.joined
+
+      }
+
+    })
+
+
+  }
+
+  faceRecognition = (imgURL) => {
+
+    function PlotBoundingBoxes(regionsArray){
+  
+          function draw(xOrigin, yOrigin, width, height) {
+            const canvas = document.getElementById("canvas");
+            if (canvas.getContext) {
+              const ctx = canvas.getContext("2d");
+  
+      // Box Style:
+  
+              var gradient = ctx.createLinearGradient(0, 0, 170, 0);
+              gradient.addColorStop("0", "magenta");
+              gradient.addColorStop("0.5" ,"blue");
+              gradient.addColorStop("1.0", "red");
+  
+              ctx.strokeStyle = gradient;
+              ctx.lineWidth = 2;
+  
+      // Box Scaling and Positioning:
+  
+              let widthScaleFix = 1.15;
+              let heightScaleFix = 1.95;
+              ctx.strokeRect(xOrigin*350/widthScaleFix, yOrigin*300/heightScaleFix, width*350/widthScaleFix, height*300/heightScaleFix);
+        /*ctx.fillRect(175/1.2, 150/2, 30, 30/1.8);*/ // Calibration
+            }
+          }
+  
+          console.log('regionsArray', regionsArray);
+  
+          const ctx = document.getElementById("canvas").getContext("2d");
+          ctx.reset();
+  
+          let len = listOfFaces.length;
+      for(let i=0; i<len; i++){listOfFaces.pop()}; // Clean the array from the previews analysis.
+  
+        regionsArray.map((region) => {
+  
+          console.log('detected region', region);
+          let xOrigin = region.region_info.bounding_box.left_col;
+          let yOrigin = region.region_info.bounding_box.top_row;
+          let width =  region.region_info.bounding_box.right_col - xOrigin;
+          let height = region.region_info.bounding_box.bottom_row - yOrigin;
+  
+        /*console.log(xOrigin, yOrigin, width, height);*/
+  
+          listOfFaces.push([xOrigin, yOrigin, width, height]);
+  
+          draw(xOrigin, yOrigin, width, height);
+  
+  
+  
+        });
+  
+    };
+  
+    function hideCanvasDisplayLogo (){
+  
+      let canvasBox =  document.getElementsByClassName('canvas')[0];
+      let logo =  document.getElementsByClassName('logo')[0];
+      let tiltBox = document.getElementsByClassName('Tilt')[0];
+  
+      logo.style.opacity = 1;
+      logo.style.width = '220px';
+      logo.style.height = '180px';
+  
+      tiltBox.style.backgroundImage = 'url('+ imgURL +')';
+  
+      canvasBox.style.width = '0px';
+      canvasBox.style.height = '0px';
+      canvasBox.style.border = '0px solid black';
+  
+    };
+  
+    function displayCanvasHideLogo (){
+  
+      let canvasBox =  document.getElementsByClassName('canvas')[0];
+      let logo =  document.getElementsByClassName('logo')[0];
+      let tiltBox = document.getElementsByClassName('Tilt')[0];
+  
+      logo.style.opacity = 0;
+      logo.style.width = 0;
+      logo.style.height = 0;
+  
+      canvasBox.style.width = '350px';
+      canvasBox.style.height = '300px';
+      canvasBox.style.border = '0px solid black';
+  
+    };
+  
+    document.getElementsByClassName('zoomBox')[0].style.display = ''; // Unable zoom box display.
+    document.getElementById("zoomCanvas").getContext("2d").reset(); // Clear the zoom canvas for next plot.
+  
+    imgURL = imgURL.replace(/\s+/g, ''); // Removes accidental whitespaces from url.
+  
+    imageLink = imgURL; // Saves the current url link in a variable of greater scope so it can be used from other functions.
+    
+    // console.log(Clarifai);
+  
+    app.models.predict(    {
+      id: "a403429f2ddf4b49b307e318f00e528b",
+      version: "34ce21a40cc24b6b96ffee54aabff139",
+    }, imgURL) //Requests face recognition analysis from Clarifai API.
+    .then(
+  
+      response => {
+
+        if (response) {
+
+          fetch('http://localhost:3000/image', {
+            'method': 'put',
+            'headers': {'Content-Type': 'application/json'},
+            'body' : JSON.stringify({
+                id: this.state.user.id
+            })
+          }).then(response => response.json())
+            .then(count => {
+              console.log(count);
+              this.setState(Object.assign(this.state.user, {entries: count}));
+          });
+
+          // console.log('response', response);
+  
+          hideCanvasDisplayLogo();
+  
+          setTimeout(() => {
+  
+  
+          displayCanvasHideLogo();
+          PlotBoundingBoxes(response.outputs[0].data.regions);
+          // console.log('listOfDetectedFaces: ', listOfFaces);
+  
+          }, 3000);
+
+        }
+  
+      }
+
+      ).catch(err => console.log(err));
+  
+  };
+  
 
   onInputChange = (event) => {
 
@@ -182,12 +224,11 @@ class App extends Component {
 
   }
 
-  onButtonSubmit = () => {
+  onPictureSubmit = () => {
 
-    console.log('click');
     let imgURL = this.state.input;
-    faceRecognition(imgURL);
-
+    this.faceRecognition(imgURL);
+    
   };
 
   sample = () => {
@@ -202,18 +243,24 @@ class App extends Component {
       'https://img.freepik.com/premium-photo/group-diverse-people-studio_53876-9287.jpg?w=996'];
 
 
-    if (sampleIndex[0] === 4){
-      sampleIndex[0] = 0;
-    };
-    let URL = sampleURL[sampleIndex[0]];
+    if(this.state.sampleCurrentIndex === 4){
+      
+      let URL = sampleURL[0];
+      this.setState({sampleCurrentIndex:1});
+      this.faceRecognition(URL);
 
-    sampleIndex[0] = sampleIndex[0] + 1;
+    }
+    else{
 
+      let URL = sampleURL[this.state.sampleCurrentIndex];
+      this.setState({sampleCurrentIndex:this.state.sampleCurrentIndex+1});
+      console.log('URL: ' ,URL);
+      this.setState({input: URL});
+      document.getElementById('linkSpace').value = URL;
+      this.faceRecognition(URL);
+  
+    }
 
-    console.log('URL: ' ,URL);
-    this.setState({input: URL});
-    document.getElementById('linkSpace').value = URL;
-    faceRecognition(URL);
 
   };
 
@@ -342,21 +389,28 @@ class App extends Component {
 
 
   render (){
-
-
+    
     return (
+
       <div className="App">
       {(this.state.route === 'loggedin') ? <Navigation onRouteChange = {this.onRouteChange} /> :  <div style={{height:'40px'}}></div>}
       <Logo onHoverImage = {this.onHoverImage}/>
-      {(this.state.route === 'loggedin') ? <Rank /> : <div></div>}
+      {(this.state.route === 'loggedin') ? <Rank userName = {this.state.user.name} entries = {this.state.user.entries} /> : <div></div>}
+      { ((this.state.route === 'signin')) ? 
+        <p className='f3' style ={{fontSize:'20px', margin:'10px' }}>
+                {'Exchange pixels for information.'}
+        </p>
+        : ''
+      }
       <ImageLinkForm onInputChange = {this.onInputChange} 
-      onButtonSubmit = {this.onButtonSubmit} 
+      onPictureSubmit = {this.onPictureSubmit} 
       sample = {this.sample}
       onCopyFromClipboard = {this.onCopyFromClipboard}/>
-      {(this.state.route === 'signin') ? <Signin onRouteChange = {this.onRouteChange}/> : <div></div>}
-      {(this.state.route === 'signup') ? <Signup onRouteChange = {this.onRouteChange}/> : <div></div>}
+      {(this.state.route === 'signin') ? <Signin Signup loadUser = {this.loadUser} onRouteChange = {this.onRouteChange}/> : <div></div>}
+      {(this.state.route === 'signup') ? <Signup loadUser = {this.loadUser} onRouteChange = {this.onRouteChange}/> : <div></div>}
       <ParticlesBg type="custom" config={config} bg={true} />
       <Footer />
+
 
       </div>
       );

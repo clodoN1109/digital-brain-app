@@ -1,34 +1,98 @@
 import React from 'react';
 // import './Signup.css';
 
-const Signup = ({onRouteChange}) => {
+class Signup extends React.Component {
 
-    return(
+    constructor(props) {
+        super();
+        this.state = {
+            email: '',
+            favoriteColor:'',
+            password: ''
+        }
+    }
 
-        <div>
-            <article class="pa4">
-            <form action="sign-up_submit" method="get" accept-charset="utf-8">
-                <fieldset id="sign_up" class="ba b--transparent ph0 mh0">
-                <legend class="ph0 mh0 fw6 clip">Sign Up</legend>
-                <div class="mt3">
-                    <label class="db fw4 lh-copy f6" htmlFor="email-address">Email address</label>
-                    <input class="pa2 input-reset ba bg-transparent w-100 measure" type="email" name="email-address"  id="email-address"></input>
-                </div>
-                <div class="mt3">
-                    <label class="db fw4 lh-copy f6" htmlFor="favorite-color">Favorite Color</label>
-                    <input style={{width:"70px", height:"70px"}} class=" input-reset ba bg-transparent w-100" type="color" name="favorite-color"  id="favorite-color"></input>
-                </div>
-                <div class="mt3">
-                    <label class="db fw4 lh-copy f6" htmlFor="password">Password</label>
-                    <input class="b pa2 input-reset ba bg-transparent" type="password" name="password"  id="password"></input>
-                </div>
-                </fieldset>
-                <div onClick={() => onRouteChange('signin')} class="mt3"><input class="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6" type="submit" value="Sign Up"></input></div>
-            </form>
-            </article>
-        </div>
+    onEmailChange = () => {
+        this.setState({email : event.target.value})
+    }
 
-    )
+    onColorChange = () => {
+        this.setState({favoriteColor : event.target.value})
+    }
+
+    onPasswordChange = () => {
+        this.setState({password : event.target.value})
+    }
+
+    onSubmitSignUp = () => {
+
+        fetch('http://localhost:3000/register', {
+            'method': 'post',
+            'headers': {'Content-Type': 'application/json'},
+            'body' : JSON.stringify({
+
+                email: this.state.email,
+                favoriteColor: this.state.favoriteColor,
+                password: this.state.password
+
+            })
+        }).then(response => response.json())
+          .then(data => {
+            console.log(data);
+            this.props.onRouteChange('signin');
+           });
+            
+    }
+
+    render(){
+
+        
+
+        return(
+
+            <div>
+                <article className="pa4">
+                <form action="sign-up_submit" method="get" acceptCharset="utf-8">
+                    <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
+                    <legend className="ph0 mh0 fw6 clip">Sign Up</legend>
+                    <div className="mt3">
+                        <label className="db fw4 lh-copy f6" htmlFor="email-address">Email address</label>
+                        <input className="pa2 input-reset ba bg-transparent w-100 measure" 
+                               type="email" 
+                               name="email-address"  
+                               id="email-address"
+                               onChange={this.onEmailChange}
+                               ></input>
+                    </div>
+                    <div className="mt3">
+                        <label className="db fw4 lh-copy f6" htmlFor="favorite-color">Favorite Color</label>
+                        <input style={{width:"70px", height:"70px"}} 
+                               className=" input-reset ba bg-transparent w-100" 
+                               type="color" 
+                               name="favorite-color"  
+                               id="favorite-color"
+                               onChange={this.onColorChange}
+                               ></input>
+                    </div>
+                    <div className="mt3">
+                        <label className="db fw4 lh-copy f6" htmlFor="password">Password</label>
+                        <input className="b pa2 input-reset ba bg-transparent" 
+                               type="password" 
+                               name="password"  
+                               id="password"
+                               onChange={this.onPasswordChange}
+                               ></input>
+                    </div>
+                    </fieldset>
+                    <div onClick={this.onSubmitSignUp} className="mt3"><input className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6" type="submit" value="Sign Up"></input></div>
+                </form>
+                </article>
+            </div>
+    
+        )
+
+    };
+    
 
 };
 

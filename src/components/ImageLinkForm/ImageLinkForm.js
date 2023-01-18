@@ -1,14 +1,12 @@
 import React from 'react';
 import './ImageLinkForm.css';
 
-const ImageLinkForm = ({onInputChange, onButtonSubmit, sample, onCopyFromClipboard}) => {
+const ImageLinkForm = ({onInputChange, onPictureSubmit, sample, onCopyFromClipboard}) => {
 
     return (
 
         <div className='center' style={{padding:'0 0 60px 0'}}> 
-            <p className='f3' style ={{fontSize:'20px', margin:'10px' }}>
-                {'Exchange pixels for information.'}
-            </p>
+
             <div className='pa4 br3 shadow-5 form' style={{width:'70%'}}>
                 
                 <div className='linkBox'>
@@ -36,7 +34,7 @@ const ImageLinkForm = ({onInputChange, onButtonSubmit, sample, onCopyFromClipboa
                 
                     <button style={{backgroundColor:'rgba(0,0,0,0.4)', fontSize:'1.2vw'}} 
                             className='w-15 link dib white sendButton'
-                            onClick = {onButtonSubmit}
+                            onClick = {onPictureSubmit}
                     > 
 
                         <img width="100%" height="100%" alt='r' src="sendIcon.png"
