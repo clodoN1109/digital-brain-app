@@ -5,17 +5,18 @@ const ImageLinkForm = ({onInputChange, onPictureSubmit, sample, onCopyFromClipbo
 
     return (
 
-        <div className='center' style={{padding:'0 0 60px 0'}}> 
+        <div className='center' style={{padding:'0 0 30px 0'}}> 
 
             <div className='pa4 br3 shadow-5 form' style={{width:'70%'}}>
                 
                 <div className='linkBox'>
-                    <input style={{fontSize:'15px'}} 
+                    <input style={{fontSize:'15px', color:'rgb(24,140,180)'}}
                            placeholder = 'enter image URL or local address' 
                            id='linkSpace' 
                            className='f4 pa2 w-70 input-reset ba bg-transparent' 
                            type='text' 
-                           onChange={onInputChange}/> 
+                           onChange={onInputChange}
+                           /> 
 
                     <button style={{backgroundColor:'rgba(0,0,0,0.4)'}} 
                             className='copyButton w-15 link ph2 dib white'

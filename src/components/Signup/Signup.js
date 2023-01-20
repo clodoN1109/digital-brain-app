@@ -6,10 +6,15 @@ class Signup extends React.Component {
     constructor(props) {
         super();
         this.state = {
+            name: '',
             email: '',
-            favoriteColor:'',
+            favoriteColor:'#000000',
             password: ''
         }
+    }
+
+    onNameChange = () => {
+        this.setState({name : event.target.value})
     }
 
     onEmailChange = () => {
@@ -31,6 +36,7 @@ class Signup extends React.Component {
             'headers': {'Content-Type': 'application/json'},
             'body' : JSON.stringify({
 
+                name: this.state.name,
                 email: this.state.email,
                 favoriteColor: this.state.favoriteColor,
                 password: this.state.password
@@ -56,12 +62,30 @@ class Signup extends React.Component {
                     <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
                     <legend className="ph0 mh0 fw6 clip">Sign Up</legend>
                     <div className="mt3">
+                        <label className="db fw4 lh-copy f6" htmlFor="name">Name</label>
+                        <input className="pa2 input-reset ba bg-transparent w-30 measure" 
+                               type="text" 
+                               name="name"  
+                               id="name"
+                               onChange={this.onNameChange}
+                            ></input>
+                    </div>
+                    <div className="mt3">
                         <label className="db fw4 lh-copy f6" htmlFor="email-address">Email address</label>
-                        <input className="pa2 input-reset ba bg-transparent w-100 measure" 
+                        <input className="pa2 input-reset ba bg-transparent w-30 measure" 
                                type="email" 
                                name="email-address"  
                                id="email-address"
                                onChange={this.onEmailChange}
+                               ></input>
+                    </div>
+                    <div className="mt3">
+                        <label className="db fw4 lh-copy f6" htmlFor="password">Password</label>
+                        <input className="b pa2 input-reset ba bg-transparent w-30" 
+                               type="password" 
+                               name="password"  
+                               id="password"
+                               onChange={this.onPasswordChange}
                                ></input>
                     </div>
                     <div className="mt3">
@@ -74,15 +98,7 @@ class Signup extends React.Component {
                                onChange={this.onColorChange}
                                ></input>
                     </div>
-                    <div className="mt3">
-                        <label className="db fw4 lh-copy f6" htmlFor="password">Password</label>
-                        <input className="b pa2 input-reset ba bg-transparent" 
-                               type="password" 
-                               name="password"  
-                               id="password"
-                               onChange={this.onPasswordChange}
-                               ></input>
-                    </div>
+                   
                     </fieldset>
                     <div onClick={this.onSubmitSignUp} className="mt3"><input className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6" type="submit" value="Sign Up"></input></div>
                 </form>

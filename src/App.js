@@ -25,6 +25,23 @@ const app = new Clarifai.App({
       apiKey: 'b8996a9b4962460e97e5ada5dc67192e'
 });
 
+const initialState = {
+  input:'',
+  route:'signin',
+  user: {
+
+    id: '',
+    name: '',
+    email: '',
+    favoriteColor: '',
+    entries: 0,
+    joined: ''
+
+  },
+  sampleCurrentIndex : 0
+}
+
+
 class App extends Component {
 
   constructor(){
@@ -35,7 +52,7 @@ class App extends Component {
       route:'signin',
       user: {
 
-        id: '0',
+        id: '',
         name: '',
         email: '',
         favoriteColor: '',
@@ -68,6 +85,40 @@ class App extends Component {
 
 
   }
+
+  hideCanvasDisplayLogo = (imgURL) => {
+  
+    let canvasBox =  document.getElementsByClassName('canvas')[0];
+    let logo =  document.getElementsByClassName('logo')[0];
+    let tiltBox = document.getElementsByClassName('Tilt')[0];
+
+    logo.style.opacity = 1;
+    logo.style.width = '220px';
+    logo.style.height = '180px';
+
+    tiltBox.style.backgroundImage = 'url('+ imgURL +')';
+
+    canvasBox.style.width = '0px';
+    canvasBox.style.height = '0px';
+    canvasBox.style.border = '0px solid black';
+
+  };
+  
+  displayCanvasHideLogo = () => {
+  
+    let canvasBox =  document.getElementsByClassName('canvas')[0];
+    let logo =  document.getElementsByClassName('logo')[0];
+    let tiltBox = document.getElementsByClassName('Tilt')[0];
+
+    logo.style.opacity = 0;
+    logo.style.width = 0;
+    logo.style.height = 0;
+
+    canvasBox.style.width = '350px';
+    canvasBox.style.height = '300px';
+    canvasBox.style.border = '0px solid black';
+
+  };
 
   faceRecognition = (imgURL) => {
 
@@ -124,41 +175,7 @@ class App extends Component {
         });
   
     };
-  
-    function hideCanvasDisplayLogo (){
-  
-      let canvasBox =  document.getElementsByClassName('canvas')[0];
-      let logo =  document.getElementsByClassName('logo')[0];
-      let tiltBox = document.getElementsByClassName('Tilt')[0];
-  
-      logo.style.opacity = 1;
-      logo.style.width = '220px';
-      logo.style.height = '180px';
-  
-      tiltBox.style.backgroundImage = 'url('+ imgURL +')';
-  
-      canvasBox.style.width = '0px';
-      canvasBox.style.height = '0px';
-      canvasBox.style.border = '0px solid black';
-  
-    };
-  
-    function displayCanvasHideLogo (){
-  
-      let canvasBox =  document.getElementsByClassName('canvas')[0];
-      let logo =  document.getElementsByClassName('logo')[0];
-      let tiltBox = document.getElementsByClassName('Tilt')[0];
-  
-      logo.style.opacity = 0;
-      logo.style.width = 0;
-      logo.style.height = 0;
-  
-      canvasBox.style.width = '350px';
-      canvasBox.style.height = '300px';
-      canvasBox.style.border = '0px solid black';
-  
-    };
-  
+
     document.getElementsByClassName('zoomBox')[0].style.display = ''; // Unable zoom box display.
     document.getElementById("zoomCanvas").getContext("2d").reset(); // Clear the zoom canvas for next plot.
   
@@ -178,26 +195,31 @@ class App extends Component {
 
         if (response) {
 
-          fetch('http://localhost:3000/image', {
-            'method': 'put',
-            'headers': {'Content-Type': 'application/json'},
-            'body' : JSON.stringify({
-                id: this.state.user.id
-            })
-          }).then(response => response.json())
-            .then(count => {
-              console.log(count);
-              this.setState(Object.assign(this.state.user, {entries: count}));
-          });
+          if (this.state.route === "loggedin"){
+
+            fetch('http://localhost:3000/image', {
+              'method': 'put',
+              'headers': {'Content-Type': 'application/json'},
+              'body' : JSON.stringify({
+                  id: this.state.user.id
+              })
+            }).then(response => response.json())
+              .then(count => {
+                //console.log(count);
+                this.setState(Object.assign(this.state.user, {entries: count}));
+            });
+
+          };
+
 
           // console.log('response', response);
   
-          hideCanvasDisplayLogo();
+          this.hideCanvasDisplayLogo(imgURL);
   
           setTimeout(() => {
   
   
-          displayCanvasHideLogo();
+          this.displayCanvasHideLogo();
           PlotBoundingBoxes(response.outputs[0].data.regions);
           // console.log('listOfDetectedFaces: ', listOfFaces);
   
@@ -220,8 +242,26 @@ class App extends Component {
 
   onRouteChange = (event) => {
 
-    this.setState({route: event});
+    if(event === 'signin'){
 
+
+      document.getElementById("zoomCanvas").getContext("2d").reset();
+      document.getElementsByClassName('zoomBox')[0].style.display = 'none';
+      this.hideCanvasDisplayLogo();
+
+      this.setState({user:initialState});
+
+    }
+
+    if (event === 'loggedin') {
+
+      document.getElementById("zoomCanvas").getContext("2d").reset();
+      document.getElementsByClassName('zoomBox')[0].style.display = 'none';
+      this.hideCanvasDisplayLogo();
+
+    }
+
+    this.setState({route: event});
   }
 
   onPictureSubmit = () => {
@@ -312,8 +352,19 @@ class App extends Component {
                           
           ctx.drawImage(image, xOrigin, yOrigin, width, height, 0, 0, xRes, yRes);
           
-          let imageData = ctx.getImageData(xOrigin, yOrigin, width, height);
+          console.log(ctx);
+          let imageData = ctx.createImageData(350,300);
           console.log(imageData);
+          for (let i = 0; i < imageData.data.length; i += 4) {
+            // Modify pixel data
+            imageData.data[i + 0] = 190;  // R value
+            imageData.data[i + 1] = 0;    // G value
+            imageData.data[i + 2] = 210;  // B value
+            imageData.data[i + 3] = 255;  // A value
+          }
+          console.log(imageData);
+          //let imageData = ctx.getImageData(xOrigin, yOrigin, width, height);
+          //console.log(imageData);
           //ctx.putImageData(imageData, 0, 0);
 
         });
@@ -410,6 +461,7 @@ class App extends Component {
       {(this.state.route === 'signup') ? <Signup loadUser = {this.loadUser} onRouteChange = {this.onRouteChange}/> : <div></div>}
       <ParticlesBg type="custom" config={config} bg={true} />
       <Footer />
+      
 
 
       </div>
