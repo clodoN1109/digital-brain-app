@@ -1,5 +1,6 @@
 import React from 'react';
 // import './Signup.css';
+import Tilt from 'react-parallax-tilt';
 
 class Signup extends React.Component {
 
@@ -9,16 +10,20 @@ class Signup extends React.Component {
             name: '',
             email: '',
             favoriteColor:'#000000',
-            password: ''
+            password: '',
+            route:''
+
         }
     }
 
     onNameChange = () => {
-        this.setState({name : event.target.value})
+        this.setState({name : event.target.value});
+        this.setState({route:''});
     }
 
     onEmailChange = () => {
-        this.setState({email : event.target.value})
+        this.setState({email : event.target.value});
+        this.setState({route:''});
     }
 
     onColorChange = () => {
@@ -26,12 +31,13 @@ class Signup extends React.Component {
     }
 
     onPasswordChange = () => {
-        this.setState({password : event.target.value})
+        this.setState({password : event.target.value});
+        this.setState({route:''});
     }
 
     onSubmitSignUp = () => {
 
-        fetch('http://localhost:3000/register', {
+        fetch('https://digitalbrainapp.onrender.com/register', {
             'method': 'post',
             'headers': {'Content-Type': 'application/json'},
             'body' : JSON.stringify({
@@ -43,10 +49,17 @@ class Signup extends React.Component {
 
             })
         }).then(response => response.json())
-          .then(data => {
-            console.log(data);
-            this.props.onRouteChange('signin');
-           });
+          .then(user => {
+
+            if (user === 'incomplete form'){
+                this.setState({route:'failedToSignup'});
+            }
+            else{
+                //console.log(user);
+                this.props.onRouteChange('signin');
+            }  
+            
+        });
             
     }
 
@@ -58,12 +71,13 @@ class Signup extends React.Component {
 
             <div>
                 <article className="pa4">
-                <form action="sign-up_submit" method="get" acceptCharset="utf-8">
+                <div className='measure center' action="sign-up_submit" method="get" acceptCharset="utf-8">
+                <Tilt className='Tilt br2 shadow-2' style={{padding:'50px', height:'500px', opacity:'1'}}>
                     <fieldset id="sign_up" className="ba b--transparent ph0 mh0">
-                    <legend className="ph0 mh0 fw6 clip">Sign Up</legend>
+                    <legend className="f4 fw6 ph0 mh0">Sign Up</legend> 
                     <div className="mt3">
                         <label className="db fw4 lh-copy f6" htmlFor="name">Name</label>
-                        <input className="pa2 input-reset ba bg-transparent w-30 measure" 
+                        <input className="pa2 input-reset ba bg-transparent w-100 measure" 
                                type="text" 
                                name="name"  
                                id="name"
@@ -72,7 +86,7 @@ class Signup extends React.Component {
                     </div>
                     <div className="mt3">
                         <label className="db fw4 lh-copy f6" htmlFor="email-address">Email address</label>
-                        <input className="pa2 input-reset ba bg-transparent w-30 measure" 
+                        <input className="pa2 input-reset ba bg-transparent w-100 measure" 
                                type="email" 
                                name="email-address"  
                                id="email-address"
@@ -81,7 +95,7 @@ class Signup extends React.Component {
                     </div>
                     <div className="mt3">
                         <label className="db fw4 lh-copy f6" htmlFor="password">Password</label>
-                        <input className="b pa2 input-reset ba bg-transparent w-30" 
+                        <input className="b pa2 input-reset ba bg-transparent w-100" 
                                type="password" 
                                name="password"  
                                id="password"
@@ -101,7 +115,10 @@ class Signup extends React.Component {
                    
                     </fieldset>
                     <div onClick={this.onSubmitSignUp} className="mt3"><input className="b ph3 pv2 input-reset ba b--black bg-transparent grow pointer f6" type="submit" value="Sign Up"></input></div>
-                </form>
+                    {(this.state.route === 'failedToSignup') ? <div style={{margin: '5px', color:'red', fontFamily:'courier'}}>COMPLETE THE FORM.</div> : <div style={{margin: '5px', color:'transparent'}}>R</div>}
+
+                </Tilt>
+                </div>
                 </article>
             </div>
     

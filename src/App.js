@@ -19,12 +19,6 @@ let lastIndexOfFace = -1; // Face bounding box index pointer is currently over.
 
 let imageLink = ''; // Current url or local address on the link form.
 
-let pixelCount = 0;
-
-const app = new Clarifai.App({
-      apiKey: 'b8996a9b4962460e97e5ada5dc67192e'
-});
-
 const initialState = {
   input:'',
   route:'signin',
@@ -185,10 +179,15 @@ class App extends Component {
     
     // console.log(Clarifai);
   
-    app.models.predict(    {
-      id: "a403429f2ddf4b49b307e318f00e528b",
-      version: "34ce21a40cc24b6b96ffee54aabff139",
-    }, imgURL) //Requests face recognition analysis from Clarifai API.
+    fetch('https://digitalbrainapp.onrender.com/imageurl', {
+              'method': 'post',
+              'headers': {'Content-Type': 'application/json'},
+              'body' : JSON.stringify({
+                  input: imgURL
+              })
+            })
+            .then(response => response.json())
+
     .then(
   
       response => {
@@ -197,7 +196,7 @@ class App extends Component {
 
           if (this.state.route === "loggedin"){
 
-            fetch('http://localhost:3000/image', {
+            fetch('https://digitalbrainapp.onrender.com/image', {
               'method': 'put',
               'headers': {'Content-Type': 'application/json'},
               'body' : JSON.stringify({
@@ -207,7 +206,7 @@ class App extends Component {
               .then(count => {
                 //console.log(count);
                 this.setState(Object.assign(this.state.user, {entries: count}));
-            });
+            }).catch(console.log);
 
           };
 
@@ -220,6 +219,7 @@ class App extends Component {
   
   
           this.displayCanvasHideLogo();
+          console.log(response);
           PlotBoundingBoxes(response.outputs[0].data.regions);
           // console.log('listOfDetectedFaces: ', listOfFaces);
   
@@ -247,6 +247,14 @@ class App extends Component {
 
       document.getElementById("zoomCanvas").getContext("2d").reset();
       document.getElementsByClassName('zoomBox')[0].style.display = 'none';
+      document.getElementById('linkSpace').value = '';
+
+      listOfFaces = [];
+
+      lastIndexOfFace = -1; 
+
+      imageLink = ''; 
+
       this.hideCanvasDisplayLogo();
 
       this.setState({user:initialState});
@@ -257,6 +265,14 @@ class App extends Component {
 
       document.getElementById("zoomCanvas").getContext("2d").reset();
       document.getElementsByClassName('zoomBox')[0].style.display = 'none';
+      document.getElementById('linkSpace').value = '';
+
+      listOfFaces = [];
+
+      lastIndexOfFace = -1; 
+
+      imageLink = ''; 
+
       this.hideCanvasDisplayLogo();
 
     }
@@ -447,7 +463,7 @@ class App extends Component {
       {(this.state.route === 'loggedin') ? <Navigation onRouteChange = {this.onRouteChange} /> :  <div style={{height:'40px'}}></div>}
       <Logo onHoverImage = {this.onHoverImage}/>
       {(this.state.route === 'loggedin') ? <Rank userName = {this.state.user.name} entries = {this.state.user.entries} /> : <div></div>}
-      { ((this.state.route === 'signin')) ? 
+      { ((this.state.route === 'signin') || (this.state.route === 'signup')) ? 
         <p className='f3' style ={{fontSize:'20px', margin:'10px' }}>
                 {'Exchange pixels for information.'}
         </p>

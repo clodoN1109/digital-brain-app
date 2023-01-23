@@ -1,6 +1,7 @@
 {
   "name": "modern-app-template",
   "version": "0.1.0",
+  "homepage":"http://clodoN1109.github.io/digital-brain-app", 
   "private": true,
   "dependencies": {
     "axios": "^0.24.0",
@@ -29,5 +30,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "gh-pages": "^5.0.0"
   }
 }
