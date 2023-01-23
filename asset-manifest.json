@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/digital-brain-app/static/css/main.64f7c964.css",
+    "main.js": "/digital-brain-app/static/js/main.4ab6af0e.js",
+    "static/media/heyclodo-icon-gray.jpg": "/digital-brain-app/static/media/heyclodo-icon-gray.429a53ce6e4fc0f8a201.jpg",
+    "static/media/heyclodo-icon-gray-inverted.jpg": "/digital-brain-app/static/media/heyclodo-icon-gray-inverted.7db1802211d550def5e7.jpg",
+    "static/media/brain.png": "/digital-brain-app/static/media/brain.fbbe1829517558624f3e.png",
+    "index.html": "/digital-brain-app/index.html",
+    "main.64f7c964.css.map": "/digital-brain-app/static/css/main.64f7c964.css.map",
+    "main.4ab6af0e.js.map": "/digital-brain-app/static/js/main.4ab6af0e.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.64f7c964.css",
+    "static/js/main.4ab6af0e.js"
+  ]
+}
