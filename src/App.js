@@ -178,7 +178,8 @@ class App extends Component {
     imageLink = imgURL; // Saves the current url link in a variable of greater scope so it can be used from other functions.
     
     // console.log(Clarifai);
-  
+    document.getElementById('state-info').innerHTML = 'Waiting server response.';
+
     fetch('https://digitalbrainapp.onrender.com/imageurl', {
               'method': 'post',
               'headers': {'Content-Type': 'application/json'},
@@ -222,6 +223,8 @@ class App extends Component {
           console.log(response);
           PlotBoundingBoxes(response.outputs[0].data.regions);
           // console.log('listOfDetectedFaces: ', listOfFaces);
+
+          document.getElementById('state-info').innerHTML = 'There you go!!';
   
           }, 3000);
 
@@ -464,7 +467,7 @@ class App extends Component {
       <Logo onHoverImage = {this.onHoverImage}/>
       {(this.state.route === 'loggedin') ? <Rank userName = {this.state.user.name} entries = {this.state.user.entries} /> : <div></div>}
       { ((this.state.route === 'signin') || (this.state.route === 'signup')) ? 
-        <p className='f3' style ={{fontSize:'20px', margin:'10px' }}>
+        <p id='state-info' className='f3' style ={{fontSize:'20px', margin:'10px' }}>
                 {'Exchange pixels for information.'}
         </p>
         : ''
@@ -473,8 +476,8 @@ class App extends Component {
       onPictureSubmit = {this.onPictureSubmit} 
       sample = {this.sample}
       onCopyFromClipboard = {this.onCopyFromClipboard}/>
-      {(this.state.route === 'signin') ? <Signin Signup loadUser = {this.loadUser} onRouteChange = {this.onRouteChange}/> : <div></div>}
-      {(this.state.route === 'signup') ? <Signup loadUser = {this.loadUser} onRouteChange = {this.onRouteChange}/> : <div></div>}
+      {/* {(this.state.route === 'signin') ? <Signin Signup loadUser = {this.loadUser} onRouteChange = {this.onRouteChange}/> : <div></div>}
+      {(this.state.route === 'signup') ? <Signup loadUser = {this.loadUser} onRouteChange = {this.onRouteChange}/> : <div></div>} */}
       <ParticlesBg type="custom" config={config} bg={true} />
       <Footer />
       

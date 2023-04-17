@@ -25,12 +25,12 @@ const ImageLinkForm = ({onInputChange, onPictureSubmit, sample, onCopyFromClipbo
                              title="Paste URL."/>
                     </button>
 
-                    <button style={{backgroundColor:'rgba(0,0,0,0.4)'}} 
+                    {/* <button style={{backgroundColor:'rgba(0,0,0,0.4)'}} 
                             className='folderButton w-15 link ph2 dib white'
                             onClick = {onCopyFromClipboard}> 
                         <img width="100%" height="100%" alt='r' src="directoryIcon.png"
                              title="Choose folder."/>
-                    </button>
+                    </button> */}
 
                 
                     <button style={{backgroundColor:'rgba(0,0,0,0.4)', fontSize:'1.2vw'}} 
