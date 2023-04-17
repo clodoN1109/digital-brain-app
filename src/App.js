@@ -19,6 +19,8 @@ let lastIndexOfFace = -1; // Face bounding box index pointer is currently over.
 
 let imageLink = ''; // Current url or local address on the link form.
 
+let submitsCounter = 0;
+
 const initialState = {
   input:'',
   route:'signin',
@@ -178,8 +180,11 @@ class App extends Component {
     imageLink = imgURL; // Saves the current url link in a variable of greater scope so it can be used from other functions.
     
     // console.log(Clarifai);
-    document.getElementById('state-info').innerHTML = 'Waiting server response.';
-
+    if(submitsCounter === 0){
+      document.getElementById('state-info').innerHTML = 'Waiting server response (only 1st submit takes a while...).';
+      submitsCounter += 1;
+  }else{document.getElementById('state-info').innerHTML = 'Waiting server response.'};
+    
     fetch('https://digitalbrainapp.onrender.com/imageurl', {
               'method': 'post',
               'headers': {'Content-Type': 'application/json'},
